@@ -243,3 +243,62 @@ pre {
     box-shadow: 0 0 15px rgba(255, 0, 127, 0.8);
     transform: translateY(-2px);
 }
+/* --- GIAO DIỆN XÁC MINH MÃ VÀ ĐẾM NGƯỢC 1 PHÚT --- */
+.verification-box {
+    background: #020408;
+    border: 1px dashed var(--accent-color);
+    padding: 12px;
+    border-radius: 6px;
+    margin-top: 15px;
+    display: none;
+}
+
+.code-display-area {
+    font-size: 14px;
+    color: #ff9f43;
+    font-weight: bold;
+    margin-bottom: 8px;
+    word-break: break-all;
+}
+
+.timer-text {
+    font-size: 12px;
+    color: var(--danger-color);
+    margin-bottom: 8px;
+}
+
+.verify-input-group {
+    display: flex;
+    gap: 8px;
+}
+
+.verify-input-group input {
+    flex: 1;
+    background: #020408;
+    border: 1px solid var(--primary-color);
+    padding: 8px;
+    color: #fff;
+    border-radius: 4px;
+    outline: none;
+    font-size: 14px;
+}
+
+.verify-btn {
+    background-color: var(--primary-color);
+    color: var(--bg-color);
+    border: none;
+    padding: 0 12px;
+    font-weight: bold;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.verify-btn:hover {
+    background-color: var(--accent-color);
+    color: #fff;
+}
+
+.success-verified {
+    color: var(--primary-color) !important;
+}
