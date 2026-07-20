@@ -10,7 +10,7 @@
 </head>
 <body>
     <div id="system-wrapper">
-        <!-- Khung xác thực bảo mật & Cloudflare Turnstile đặt ngay từ đầu -->
+        <!-- Khung xác thực bảo mật & Cloudflare Turnstile -->
         <div id="auth-box" class="panel">
             <header class="panel-header">
                 <span class="status-dot"></span>
@@ -19,8 +19,13 @@
             <div class="panel-body">
                 <p>Xác thực bảo mật hệ thống để tiếp tục:</p>
                 
-                <div class="input-group" style="margin-bottom: 15px;">
+                <div class="input-group" style="margin-bottom: 8px;">
                     <input type="password" id="password" placeholder="Nhập mật khẩu hệ thống..." autocomplete="off">
+                </div>
+                
+                <!-- Hiển thị sẵn mật khẩu 123456 cho người dùng biết -->
+                <div style="font-size: 13px; color: #ff9f43; margin-bottom: 15px;">
+                    💡 Mật khẩu truy cập hệ thống: <b style="color: var(--primary-color);">123456</b>
                 </div>
 
                 <!-- Đám mây cam Cloudflare Turnstile -->
