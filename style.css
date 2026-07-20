@@ -208,3 +208,38 @@ pre {
     background: var(--primary-color);
     color: var(--bg-color);
 }
+/* --- TÙY CHỈNH CHO NÚT CLICK HERE & CODE RANDOM --- */
+.random-box {
+    background: #020408;
+    border: 1px dashed var(--accent-color);
+    padding: 10px;
+    border-radius: 6px;
+    margin-bottom: 15px;
+    font-size: 13px;
+    color: #ff9f43;
+    display: none; /* Ban đầu ẩn đi, khi bấm nút mới hiện */
+    word-break: break-all;
+}
+
+.click-btn {
+    display: block;
+    width: 100%;
+    text-align: center;
+    background: linear-gradient(135deg, var(--accent-color), #ff5252);
+    color: #fff;
+    padding: 10px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: bold;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 0 10px rgba(255, 0, 127, 0.4);
+    transition: 0.3s;
+    margin-top: 10px;
+}
+
+.click-btn:hover {
+    opacity: 0.9;
+    box-shadow: 0 0 15px rgba(255, 0, 127, 0.8);
+    transform: translateY(-2px);
+}
