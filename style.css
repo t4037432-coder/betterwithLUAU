@@ -208,6 +208,7 @@ pre {
     background: var(--primary-color);
     color: var(--bg-color);
 }
+
 /* --- TÙY CHỈNH CHO NÚT CLICK HERE & CODE RANDOM --- */
 .random-box {
     background: #020408;
@@ -217,7 +218,7 @@ pre {
     margin-bottom: 15px;
     font-size: 13px;
     color: #ff9f43;
-    display: none; /* Ban đầu ẩn đi, khi bấm nút mới hiện */
+    display: none;
     word-break: break-all;
 }
 
@@ -243,6 +244,7 @@ pre {
     box-shadow: 0 0 15px rgba(255, 0, 127, 0.8);
     transform: translateY(-2px);
 }
+
 /* --- GIAO DIỆN XÁC MINH MÃ VÀ ĐẾM NGƯỢC 1 PHÚT --- */
 .verification-box {
     background: #020408;
