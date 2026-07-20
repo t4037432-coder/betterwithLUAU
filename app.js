@@ -11,13 +11,19 @@ window.initApp = function() {
         let actionButtonHTML = "";
 
         if (sec.btnAction === "copy") {
-            // Nút "Click Here" để tạo mã ngẫu nhiên khi bấm
             actionButtonHTML = `
-                <div id="random-result-${index}" class="random-box">Mã ngẫu nhiên: <span>Chưa tạo</span></div>
-                <button class="click-btn" onclick="generateRandomCode(${index})">CLICK HERE (Lấy mã ngẫu nhiên)</button>
+                <button class="click-btn" onclick="triggerGetCode(${index})">CLICK HERE (Lấy mã ngẫu nhiên)</button>
+                
+                <div id="ver-box-${index}" class="verification-box">
+                    <div id="code-area-${index}" class="code-display-area">Mã: Đang tạo...</div>
+                    <div id="timer-${index}" class="timer-text">Hết hạn sau: 60 giây</div>
+                    <div class="verify-input-group">
+                        <input type="text" id="input-code-${index}" placeholder="Nhập lại mã xác minh..." autocomplete="off">
+                        <button class="verify-btn" onclick="verifyUserCode(${index})">XÁC MINH</button>
+                    </div>
+                </div>
             `;
         } else {
-            // Nút cho danh mục 3 (Vượt link)
             actionButtonHTML = `
                 <a href="${sec.buttonLink}" target="_blank" class="click-btn" style="background: var(--primary-color); color: var(--bg-color);">LẤY KEY (2 PHÚT)</a>
             `;
@@ -33,19 +39,77 @@ window.initApp = function() {
     });
 };
 
-// Hàm tạo dãy số/mã ngẫu nhiên khác nhau mỗi khi bấm nút
-window.generateRandomCode = function(index) {
-    const resultBox = document.getElementById(`random-result-${index}`);
-    if (!resultBox) return;
+// Lưu trữ thông tin mã và thời gian đếm ngược của từng card
+let activeCodes = {};
+let activeTimers = {};
 
-    // Tạo một chuỗi ngẫu nhiên kết hợp số và ký tự (giống mã key game)
-    const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-    let randomString = "LUAU-";
-    for (let i = 0; i < 10; i++) {
-        randomString += characters.charAt(Math.floor(Math.random() * characters.length));
+window.triggerGetCode = function(index) {
+    const box = document.getElementById(`ver-box-${index}`);
+    const codeArea = document.getElementById(`code-area-${index}`);
+    const timerText = document.getElementById(`timer-${index}`);
+    const inputField = document.getElementById(`input-code-${index}`);
+    
+    if (!box) return;
+
+    // Hiển thị khung xác minh
+    box.style.display = "block";
+    inputField.value = "";
+    inputField.disabled = false;
+    codeArea.classList.remove("success-verified");
+
+    // Tạo mã ngẫu nhiên mới khác nhau
+    const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+    let generatedCode = "LUAU-";
+    for (let i = 0; i < 8; i++) {
+        generatedCode += chars.charAt(Math.floor(Math.random() * chars.length));
     }
 
-    // Hiển thị khung kết quả và đổi mã mới liên tục mỗi lần bấm
-    resultBox.style.display = "block";
-    resultBox.querySelector("span").textContent = randomString;
+    activeCodes[index] = generatedCode;
+    codeArea.textContent = `Mã xác minh của bạn: ${generatedCode}`;
+
+    // Xóa bộ đếm cũ nếu có
+    if (activeTimers[index]) {
+        clearInterval(activeTimers[index]);
+    }
+
+    // Thiết lập thời gian sống đúng 60 giây (1 phút)
+    let timeLeft = 60;
+    timerText.textContent = `Hết hạn sau: ${timeLeft} giây`;
+
+    activeTimers[index] = setInterval(() => {
+        timeLeft--;
+        timerText.textContent = `Hết hạn sau: ${timeLeft} giây`;
+
+        if (timeLeft <= 0) {
+            clearInterval(activeTimers[index]);
+            activeCodes[index] = null; // Hủy hiệu lực mã
+            codeArea.textContent = "⚠️ Mã đã hết hạn sau 1 phút! Vui lòng bấm lấy mã mới.";
+            timerText.textContent = "Trạng thái: Đã vô hiệu hóa";
+            inputField.disabled = true;
+        }
+    }, 1000);
+};
+
+window.verifyUserCode = function(index) {
+    const inputField = document.getElementById(`input-code-${index}`);
+    const codeArea = document.getElementById(`code-area-${index}`);
+    const timerText = document.getElementById(`timer-${index}`);
+    
+    if (!inputField || !activeCodes[index]) {
+        alert("Mã đã hết hạn hoặc chưa được tạo!");
+        return;
+    }
+
+    const userTyped = inputField.value.trim();
+
+    if (userTyped === activeCodes[index]) {
+        // Dừng đếm ngược vì đã nhập đúng
+        clearInterval(activeTimers[index]);
+        codeArea.textContent = "✅ Xác minh thành công! Bạn có thể sử dụng nội dung.";
+        codeArea.classList.add("success-verified");
+        timerText.textContent = "Trạng thái: Đã hoàn tất xác thực";
+        inputField.disabled = true;
+    } else {
+        alert("Sai mã xác minh! Vui lòng kiểm tra lại.");
+    }
 };
