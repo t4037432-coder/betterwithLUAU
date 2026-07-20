@@ -3,42 +3,47 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Advanced Meme Verification System</title>
-    <!-- Liên kết file CSS giao diện -->
+    <title>Secure Luau Hub</title>
     <link rel="stylesheet" href="style.css">
+    <!-- Thư viện Cloudflare Turnstile (Mây cam) -->
+    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 </head>
 <body>
     <div id="system-wrapper">
-        <!-- Khung xác thực bảo mật -->
+        <!-- Khung xác thực bảo mật & Cloudflare Turnstile đặt ngay từ đầu -->
         <div id="auth-box" class="panel">
             <header class="panel-header">
                 <span class="status-dot"></span>
-                <h2>SECURE GATEWAY // LEVEL 1</h2>
+                <h2>SECURITY GATEWAY // VERIFICATION</h2>
             </header>
             <div class="panel-body">
-                <p>Nhập mã khóa truy cập hệ thống dữ liệu:</p>
-                <div class="input-group">
-                    <input type="password" id="password" placeholder="Nhập mật khẩu..." autocomplete="off">
-                    <button id="auth-btn">KÍCH HOẠT</button>
+                <p>Xác thực bảo mật hệ thống để tiếp tục:</p>
+                
+                <div class="input-group" style="margin-bottom: 15px;">
+                    <input type="password" id="password" placeholder="Nhập mật khẩu hệ thống..." autocomplete="off">
                 </div>
+
+                <!-- Đám mây cam Cloudflare Turnstile -->
+                <div class="cf-turnstile" data-sitekey="1x00000000000000000000AA" data-theme="dark"></div>
+
+                <button id="auth-btn" style="width: 100%; margin-top: 15px;">TRUY CẬP HỆ THỐNG</button>
                 <div id="error-msg" class="error-text"></div>
             </div>
         </div>
 
-        <!-- Khu vực hiển thị nội dung chính sau khi vượt qua bảo mật -->
+        <!-- Nội dung chính sau khi vượt qua màn hình đen -->
         <main id="content" class="hidden">
             <nav class="top-nav">
-                <h1>HỆ THỐNG PHÂN TÍCH MEME NÂNG CAO</h1>
-                <div class="system-stats">Trạng thái: <span class="online">ĐÃ KẾT NỐI</span></div>
+                <h1>LUAU SCRIPT ARCHIVE</h1>
+                <div class="system-stats">Trạng thái: <span class="online">HOẠT ĐỘNG</span></div>
             </nav>
             
             <section class="container" id="card-container">
-                <!-- Nội dung các thẻ ảnh sẽ được nạp tự động thông qua JavaScript -->
+                <!-- Nội dung các danh mục script sẽ tự nạp ở đây -->
             </section>
         </main>
     </div>
 
-    <!-- Tải các file kịch bản JavaScript theo thứ tự -->
     <script src="config.js"></script>
     <script src="auth.js"></script>
     <script src="app.js"></script>
