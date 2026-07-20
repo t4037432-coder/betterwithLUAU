@@ -1,27 +1,29 @@
-/* --- FILE CẤU HÌNH DỮ LIỆU HỆ THỐNG --- */
 const SYSTEM_CONFIG = {
-    // Mật khẩu bảo mật chính của trang web
+    // Mật khẩu bảo mật mở khóa trang web
     accessKey: "123456",
     
-    // Dữ liệu các cặp ảnh so sánh (Bạn có thể thêm bớt tùy ý ở đây)
-    comparisonData: [
+    // 3 Danh mục theo đúng ý tưởng của bạn
+    sections: [
         {
-            titleReal: "Ảnh Thật: Thực tế",
-            imageReal: "https://images.unsplash.com/photo-1543466835-00a7907e9de1?w=500",
-            descReal: "Mọi thứ diễn ra theo đúng kế hoạch ban đầu trên lý thuyết.",
-            
-            titlememe: "Ảnh Chế: Khi thực hành",
-            imageMeme: "https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=500",
-            descMeme: "Và cái kết khi chạm tay vào thực tế phũ phàng."
+            title: "1. New (Dành cho người mới)",
+            description: "Các đoạn code Luau cơ bản nhất để làm quen với Roblox Studio.",
+            codeSnippet: 'print("Hello Roblox!")\nlocal score = 10\nprint("Score is: " .. score)',
+            buttonText: "COPY CODE",
+            buttonLink: "#"
         },
         {
-            titleReal: "Ảnh Thật: Code mẫu",
-            imageReal: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=500",
-            descReal: "Đoạn mã sạch sẽ, mượt mà chạy không một lỗi nhỏ.",
-            
-            titlememe: "Ảnh Chế: Lúc fix bug",
-            imageMeme: "https://images.unsplash.com/photo-1534972195531-a756b6929f7b?w=500",
-            descMeme: "Sửa được một lỗi nhỏ và sinh ra thêm mười lỗi lớn hơn."
+            title: "2. Know Luau? Join Now",
+            description: "Thử thách tư duy logic và các hàm xử lý trung bình.",
+            codeSnippet: 'local player = game.Players.LocalPlayer\nprint("Current user: " .. player.Name)',
+            buttonText: "THAM GIA NGAY",
+            buttonLink: "#"
+        },
+        {
+            title: "3. Năng Cao (Full Module)",
+            description: "Hệ thống code chuyên sâu. Yêu cầu lấy key qua Linkvertise/Lootlabs (2 phút).",
+            codeSnippet: '-- [HỆ THỐNG ĐÃ BỊ KHÓA]\nlocal secured_data = "Cần có Key để giải mã module này!";',
+            buttonText: "LẤY KEY (2 PHÚT)",
+            buttonLink: "https://loot-link.com" // Thay link vượt key của bạn vào đây sau
         }
     ]
 };
