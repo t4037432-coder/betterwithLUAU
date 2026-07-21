@@ -76,16 +76,16 @@
                             </div>
                             <a href="${section.buttonLink}" target="_blank" style="display: inline-block; color: #00ffcc; font-size: 13px; text-decoration: underline;">👉 Bấm vào đây để lấy Key Lootlabs (2 phút)</a>
                         </div>
-                    `;
-                } else {
-                    // Mục 1 và 2: Bấm vào chuyển hướng thẳng sang trang tạm thời (Đã bỏ phần tạo key)
+             } else {
+                    // Mục 1 trỏ về success.html, Mục 2 trỏ sang Google
+                    let targetUrl = (index === 0) ? "success.html" : "https://www.google.com";
+                    
                     actionHtml = `
-                        <button onclick="window.location.href='${section.redirectUrl || "https://google.com"}'" style="margin-top: 15px; width: 100%; padding: 10px; background: #00ffcc; color: #0b0f19; border: none; font-weight: bold; border-radius: 6px; cursor: pointer; transition: 0.2s;">
+                        <button onclick="window.location.href='${targetUrl}'" style="margin-top: 15px; width: 100%; padding: 10px; background: #00ffcc; color: #0b0f19; border: none; font-weight: bold; border-radius: 6px; cursor: pointer; transition: 0.2s;">
                             CLICK HERE (Chuyển đến trang tạm thời)
                         </button>
                     `;
                 }
-
                 card.innerHTML = `
                     <h3>${section.title}</h3>
                     <p style="color: #94a3b8; font-size: 14px; margin-bottom: 10px;">${section.description}</p>
