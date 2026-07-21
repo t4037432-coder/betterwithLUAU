@@ -5,12 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Secure Luau Hub</title>
     <link rel="stylesheet" href="style.css">
-    <!-- Thư viện Cloudflare Turnstile (Mây cam) -->
+    <!-- Thư viện Cloudflare Turnstile -->
     <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 </head>
 <body>
     <div id="system-wrapper">
-        <!-- Khung xác thực bảo mật & Cloudflare Turnstile -->
+        <!-- Khung xác thực bảo mật ban đầu -->
         <div id="auth-box" class="panel">
             <header class="panel-header">
                 <span class="status-dot"></span>
@@ -23,12 +23,10 @@
                     <input type="password" id="password" placeholder="Nhập mật khẩu hệ thống..." autocomplete="off">
                 </div>
                 
-                <!-- Hiển thị sẵn mật khẩu 123456 cho người dùng biết -->
                 <div style="font-size: 13px; color: #ff9f43; margin-bottom: 15px;">
                     💡 Mật khẩu truy cập hệ thống: <b style="color: var(--primary-color);">123456</b>
                 </div>
 
-                <!-- Đám mây cam Cloudflare Turnstile -->
                 <div class="cf-turnstile" data-sitekey="1x00000000000000000000AA" data-theme="dark"></div>
 
                 <button id="auth-btn" style="width: 100%; margin-top: 15px;">TRUY CẬP HỆ THỐNG</button>
@@ -36,7 +34,7 @@
             </div>
         </div>
 
-        <!-- Nội dung chính sau khi vượt qua màn hình đen -->
+        <!-- Nội dung chính sau khi vượt qua màn hình bảo mật -->
         <main id="content" class="hidden">
             <nav class="top-nav">
                 <h1>LUAU SCRIPT ARCHIVE</h1>
@@ -44,13 +42,88 @@
             </nav>
             
             <section class="container" id="card-container">
-                <!-- Nội dung các danh mục script sẽ tự nạp ở đây -->
+                <!-- Nội dung các mục sẽ được tự động nạp chuẩn xác tại đây -->
             </section>
         </main>
     </div>
 
+    <!-- Tải cấu hình dữ liệu -->
     <script src="config.js"></script>
     <script src="auth.js"></script>
-    <script src="app.js"></script>
+
+    <!-- Script điều khiển hiển thị trực tiếp, không sợ lỗi cache -->
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const container = document.getElementById("card-container");
+            if (!container || typeof SYSTEM_CONFIG === "undefined") return;
+
+            container.innerHTML = "";
+
+            SYSTEM_CONFIG.sections.forEach((section, index) => {
+                const card = document.createElement("div");
+                card.className = "card";
+
+                let actionHtml = "";
+
+                // Nếu là Mục 3 (Nhập Key)
+                if (section.btnAction === "key_wall") {
+                    actionHtml = `
+                        <div style="margin-top: 15px; border-top: 1px dashed #1f293d; padding-top: 15px;">
+                            <p style="font-size: 13px; color: #ff9f43; margin-bottom: 8px;">🔒 Nhập Key 7 ngày để mở khóa:</p>
+                            <div style="display: flex; gap: 8px; margin-bottom: 8px;">
+                                <input type="text" id="key-input-${index}" placeholder="Dán key luaurb_..." style="flex: 1; padding: 10px; background: #060911; border: 1px solid #1f293d; color: #fff; border-radius: 6px; font-family: monospace;">
+                                <button onclick="verifyKey(${index}, '${section.redirectUrl || "https://google.com"}')" style="padding: 10px 15px; background: #00ffcc; color: #0b0f19; border: none; font-weight: bold; border-radius: 6px; cursor: pointer;">XÁC THỰC</button>
+                            </div>
+                            <a href="${section.buttonLink}" target="_blank" style="display: inline-block; color: #00ffcc; font-size: 13px; text-decoration: underline;">👉 Bấm vào đây để lấy Key Lootlabs (2 phút)</a>
+                        </div>
+                    `;
+                } else {
+                    // Mục 1 và 2 (Nút bấm thông thường)
+                    actionHtml = `
+                        <button onclick="alert('Chuyển hướng xác minh mã thành công!')" style="margin-top: 15px; width: 100%; padding: 10px; background: #00ffcc; color: #0b0f19; border: none; font-weight: bold; border-radius: 6px; cursor: pointer;">
+                            CLICK HERE (Lấy mã xác minh)
+                        </button>
+                    `;
+                }
+
+                card.innerHTML = `
+                    <h3>${section.title}</h3>
+                    <p style="color: #94a3b8; font-size: 14px; margin-bottom: 10px;">${section.description}</p>
+                    <pre style="background: #060911; padding: 12px; border-radius: 6px; overflow-x: auto; color: #00ffcc; font-family: monospace; font-size: 13px;"><code>${section.codeSnippet}</code></pre>
+                    ${actionHtml}
+                `;
+
+                container.appendChild(card);
+            });
+        });
+
+        // Hàm xử lý xác thực Key cho Mục 3
+        function verifyKey(index, redirectUrl) {
+            const inputField = document.getElementById(`key-input-${index}`);
+            const userEnteredKey = inputField.value.trim();
+
+            let savedData = localStorage.getItem("luau_key_data");
+            
+            if (!savedData) {
+                alert("Bạn chưa có Key! Vui lòng bấm vào link lấy key ở bên dưới.");
+                return;
+            }
+
+            let keyObj = JSON.parse(savedData);
+            const now = new Date().getTime();
+
+            if (now > keyObj.expiresAt) {
+                alert("Key của bạn đã hết hạn 7 ngày. Vui lòng lấy key mới!");
+                return;
+            }
+
+            if (userEnteredKey === keyObj.key) {
+                alert("Xác thực thành công! Đang chuyển hướng sang trang tạm thời...");
+                window.location.href = redirectUrl;
+            } else {
+                alert("Key không chính xác! Hãy kiểm tra lại.");
+            }
+        }
+    </script>
 </body>
 </html>
