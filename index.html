@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Secure Luau Hub</title>
+    <title>Secure Luau Hub - Verification System</title>
     <link rel="stylesheet" href="style.css">
     <!-- Thư viện Cloudflare Turnstile -->
     <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
@@ -11,62 +11,50 @@
 <body>
     <div id="system-wrapper">
         
-        <!-- BƯỚC 1: CỔNG XÁC THỰC MẬT KHẨU 123456 -->
+        <!-- BƯỚC 1: XÁC THỰC MẬT KHẨU HỆ THỐNG (ĐÃ VÁ LỖI HIỂN THỊ GỢI Ý) -->
         <div id="step-1-box" class="panel">
             <header class="panel-header">
                 <span class="status-dot"></span>
                 <h2>STEP 1 // SECURITY GATEWAY</h2>
             </header>
             <div class="panel-body">
-                <p>Nhập mật khẩu hệ thống để tiếp tục:</p>
+                <p>Xác thực bảo mật hệ thống để tiếp tục:</p>
                 
-                <div class="input-group" style="margin-bottom: 8px;">
-                    <input type="password" id="gateway-password" placeholder="Nhập mật khẩu (123456)..." autocomplete="off">
-                </div>
-                
-                <div style="font-size: 13px; color: #ff9f43; margin-bottom: 15px;">
-                    💡 Mật khẩu truy cập: <b style="color: var(--primary-color);">123456</b>
+                <div class="input-group" style="margin-bottom: 12px;">
+                    <!-- Đã bỏ hoàn toàn chữ gợi ý 123456 ở placeholder -->
+                    <input type="password" id="gateway-password" placeholder="Nhập mật khẩu bảo mật..." autocomplete="off">
                 </div>
 
                 <div class="cf-turnstile" data-sitekey="1x00000000000000000000AA" data-theme="dark"></div>
 
-                <button onclick="verifyGatewayPassword()" style="width: 100%; margin-top: 15px; padding: 12px; background: #00ffcc; color: #0b0f19; border: none; font-weight: bold; border-radius: 6px; cursor: pointer;">TIẾP TỤC</button>
+                <button onclick="verifyGatewayPassword()" style="width: 100%; margin-top: 15px; padding: 12px; background: #00ffcc; color: #0b0f19; border: none; font-weight: bold; border-radius: 6px; cursor: pointer;">XÁC THỰC MẬT KHẨU</button>
                 <div id="error-msg-1" class="error-text" style="color: #ff4757; margin-top: 10px; font-size: 13px;"></div>
             </div>
         </div>
 
-        <!-- BƯỚC 2: TRANG ĐĂNG KÝ / ĐĂNG NHẬP TÀI KHOẢN -->
+        <!-- BƯỚC 2: ĐĂNG KÝ EMAIL VÀ XÁC NHẬN MÃ OTP 6 SỐ -->
         <div id="step-2-box" class="panel hidden">
             <header class="panel-header">
                 <span class="status-dot"></span>
-                <h2>STEP 2 // ACCOUNT REGISTRATION</h2>
+                <h2>STEP 2 // EMAIL OTP VERIFICATION</h2>
             </header>
             <div class="panel-body">
-                <p style="margin-bottom: 15px; color: #94a3b8;">Chọn phương thức đăng nhập hệ thống:</p>
+                <p style="margin-bottom: 15px; color: #94a3b8;" id="otp-instruction">Nhập Email của bro để hệ thống gửi mã xác nhận 6 chữ số:</p>
                 
-                <!-- Tab lựa chọn phương thức -->
-                <div style="display: flex; gap: 8px; margin-bottom: 15px;">
-                    <button onclick="switchAuthTab('email')" id="tab-email-btn" style="flex: 1; padding: 8px; background: #00ffcc; color: #0b0f19; border: none; font-weight: bold; border-radius: 4px; cursor: pointer;">Email / Google</button>
-                    <button onclick="switchAuthTab('guest')" id="tab-guest-btn" style="flex: 1; padding: 8px; background: #060911; color: #94a3b8; border: 1px solid #1f293d; font-weight: bold; border-radius: 4px; cursor: pointer;">Tài khoản khách</button>
-                </div>
-
-                <!-- Form Email / Google -->
-                <div id="form-email">
+                <!-- Form Nhập Email -->
+                <div id="email-form-section">
                     <div class="input-group" style="margin-bottom: 10px;">
-                        <input type="email" id="email-input" placeholder="Nhập Email hoặc tài khoản Google..." autocomplete="off">
+                        <input type="email" id="user-email-input" placeholder="Ví dụ: myemail@gmail.com" autocomplete="off">
                     </div>
-                    <button onclick="loginWithEmail()" style="width: 100%; padding: 12px; background: #00ffcc; color: #0b0f19; border: none; font-weight: bold; border-radius: 6px; cursor: pointer;">ĐĂNG NHẬP VỚI EMAIL</button>
+                    <button onclick="sendOtpCode()" style="width: 100%; padding: 12px; background: #00ffcc; color: #0b0f19; border: none; font-weight: bold; border-radius: 6px; cursor: pointer;">GỬI MÃ OTP 6 SỐ</button>
                 </div>
 
-                <!-- Form Khách (Tự động chặn từ bậy bạ) -->
-                <div id="form-guest" class="hidden">
-                    <div class="input-group" style="margin-bottom: 8px;">
-                        <input type="text" id="guest-input" placeholder="Nhập tên tùy chọn (hoặc để trống tự random)..." autocomplete="off">
+                <!-- Form Nhập Mã OTP (Mặc định ẩn, hiện ra sau khi bấm gửi mã) -->
+                <div id="otp-form-section" class="hidden">
+                    <div class="input-group" style="margin-bottom: 10px;">
+                        <input type="text" id="otp-code-input" placeholder="Nhập 6 chữ số mã OTP..." maxlength="6" autocomplete="off" style="letter-spacing: 4px; font-weight: bold; text-align: center; font-size: 16px;">
                     </div>
-                    <div style="font-size: 12px; color: #ff9f43; margin-bottom: 10px;">
-                        ⚠️ Lưu ý: Tài khoản khách không được đặt từ ngữ phản cảm (gay, nigga,...) và sẽ không ghi nhớ trạng thái key!
-                    </div>
-                    <button onclick="loginAsGuest()" style="width: 100%; padding: 12px; background: #ff9f43; color: #0b0f19; border: none; font-weight: bold; border-radius: 6px; cursor: pointer;">VÀO BẰNG TÀI KHOẢN KHÁCH</button>
+                    <button onclick="verifyOtpCode()" style="width: 100%; padding: 12px; background: #ff9f43; color: #0b0f19; border: none; font-weight: bold; border-radius: 6px; cursor: pointer;">XÁC NHẬN MÃ OTP & ĐĂNG KÝ</button>
                 </div>
 
                 <div id="error-msg-2" class="error-text" style="color: #ff4757; margin-top: 10px; font-size: 13px;"></div>
@@ -77,7 +65,7 @@
         <main id="step-3-box" class="hidden">
             <nav class="top-nav">
                 <h1>LUAU SCRIPT ARCHIVE</h1>
-                <div class="system-stats">User: <span id="current-user-display" style="color: #00ffcc;"></span> | Loại: <span id="current-type-display" style="color: #ff9f43;"></span></div>
+                <div class="system-stats">Tài khoản Email: <span id="current-user-display" style="color: #00ffcc;"></span> | Trạng thái: <span class="online">HOẠT ĐỘNG</span></div>
             </nav>
             
             <section class="container" id="card-container">
@@ -86,7 +74,7 @@
         </main>
     </div>
 
-    <!-- Script điều khiển toàn bộ quy trình 3 bước -->
+    <!-- Script xử lý toàn bộ quy trình bảo mật và gửi OTP giả lập -->
     <script>
         const SYSTEM_CONFIG = {
             accessKey: "123456",
@@ -116,10 +104,10 @@
             ]
         };
 
-        // Danh sách từ khóa cấm cho tài khoản khách
-        const bannedWords = ["gay", "nigga", "nigger", "admin", "fuck", "shit", "sex", "lon", ccc => true]; // có thể bổ sung thêm
+        let generatedOtp = "";
+        let pendingEmail = "";
 
-        // Kiểm tra xem đã qua bước 1 chưa khi tải trang
+        // Kiểm tra trạng thái lưu trước đó
         document.addEventListener("DOMContentLoaded", () => {
             if (localStorage.getItem("gateway_verified") === "true") {
                 document.getElementById("step-1-box").classList.add("hidden");
@@ -127,13 +115,13 @@
             }
         });
 
-        // Xử lý Bước 1: Mật khẩu 123456
+        // Bước 1: Kiểm tra mật khẩu 123456 chính xác tuyệt đối (Không cho nhập bậy)
         function verifyGatewayPassword() {
             const pass = document.getElementById("gateway-password").value.trim();
             const err = document.getElementById("error-msg-1");
 
             if (pass !== SYSTEM_CONFIG.accessKey) {
-                err.innerText = "Mật khẩu không chính xác! (Gợi ý: 123456)";
+                err.innerText = "Mật khẩu hệ thống không chính xác!";
                 return;
             }
 
@@ -142,80 +130,55 @@
             document.getElementById("step-2-box").classList.remove("hidden");
         }
 
-        // Chuyển tab đăng nhập ở Bước 2
-        function switchAuthTab(type) {
-            const emailForm = document.getElementById("form-email");
-            const guestForm = document.getElementById("form-guest");
-            const emailBtn = document.getElementById("tab-email-btn");
-            const guestBtn = document.getElementById("tab-guest-btn");
-
-            if (type === 'email') {
-                emailForm.classList.remove("hidden");
-                guestForm.classList.add("hidden");
-                emailBtn.style.background = "#00ffcc";
-                emailBtn.style.color = "#0b0f19";
-                guestBtn.style.background = "#060911";
-                guestBtn.style.color = "#94a3b8";
-            } else {
-                emailForm.classList.add("hidden");
-                guestForm.classList.remove("hidden");
-                guestBtn.style.background = "#ff9f43";
-                guestBtn.style.color = "#0b0f19";
-                emailBtn.style.background = "#060911";
-                emailBtn.style.color = "#94a3b8";
-            }
-        }
-
-        // Xử lý đăng nhập bằng Email/Google (Được ghi nhớ key)
-        function loginWithEmail() {
-            const email = document.getElementById("email-input").value.trim();
+        // Bước 2.1: Gửi mã OTP 6 số về Email hợp lệ
+        function sendOtpCode() {
+            const emailInput = document.getElementById("user-email-input").value.trim();
             const err = document.getElementById("error-msg-2");
 
-            if (!email || !email.includes("@")) {
-                err.innerText = "Vui lòng nhập địa chỉ Email hợp lệ!";
+            // Kiểm tra định dạng email chặt chẽ (phải có dạng chuẩn như @gmail.com, @yahoo.com,...)
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(emailInput)) {
+                err.innerText = "Vui lòng nhập địa chỉ Email hợp lệ (ví dụ: name@gmail.com)!";
                 return;
             }
 
-            localStorage.setItem("luau_logged_user", email);
-            localStorage.setItem("luau_user_type", "Email/Google");
-            proceedToStep3(email, "Email/Google");
+            pendingEmail = emailInput;
+            // Tạo ngẫu nhiên mã OTP 6 chữ số
+            generatedOtp = Math.floor(100000 + Math.random() * 900000).toString();
+            
+            // Giả lập hệ thống gửi mã (hiển thị thông báo kèm mã OTP mô phỏng để test cho dễ)
+            err.style.color = "#00ffcc";
+            err.innerText = `📩 Mã OTP 6 số đã được gửi đến ${pendingEmail}!\n(Mã xác nhận mô phỏng của bro là: ${generatedOtp})`;
+
+            // Ẩn form nhập email, hiện form nhập mã OTP
+            document.getElementById("email-form-section").classList.add("hidden");
+            document.getElementById("otp-form-section").classList.remove("hidden");
+            document.getElementById("otp-instruction").innerText = `Nhập mã OTP 6 số đã gửi đến: <b style="color: #00ffcc;">${pendingEmail}</b>`;
         }
 
-        // Xử lý đăng nhập bằng tài khoản Khách (Chặn từ bậy, không ghi nhớ key)
-        function loginAsGuest() {
-            let guestName = document.getElementById("guest-input").value.trim().toLowerCase();
+        // Bước 2.2: Xác thực mã OTP người dùng nhập vào
+        function verifyOtpCode() {
+            const userOtp = document.getElementById("otp-code-input").value.trim();
             const err = document.getElementById("error-msg-2");
 
-            // Nếu để trống thì tự sinh tên ngẫu nhiên
-            if (!guestName) {
-                guestName = "Guest_" + Math.floor(1000 + Math.random() * 9000);
-            } else {
-                // Kiểm tra từ cấm
-                for (let word of bannedWords) {
-                    if (typeof word === 'string' && guestName.includes(word)) {
-                        err.innerText = `Tên "${guestName}" chứa từ ngữ không phù hợp hoặc bị cấm! Vui lòng chọn tên khác.`;
-                        return;
-                    }
-                }
+            if (userOtp !== generatedOtp) {
+                err.style.color = "#ff4757";
+                err.innerText = "Mã OTP không chính xác! Vui lòng kiểm tra lại.";
+                return;
             }
 
-            localStorage.setItem("luau_logged_user", guestName);
-            localStorage.setItem("luau_user_type", "Khách");
-            proceedToStep3(guestName, "Khách");
-        }
-
-        // Chuyển sang Bước 3 (Hiển thị 3 mục)
-        function proceedToStep3(username, type) {
+            // Đăng ký thành công, lưu thông tin tài khoản email
+            localStorage.setItem("luau_logged_user", pendingEmail);
+            
             document.getElementById("step-2-box").classList.add("hidden");
             document.getElementById("step-3-box").classList.remove("hidden");
-            document.getElementById("current-user-display").innerText = username;
-            document.getElementById("current-type-display").innerText = type;
+            document.getElementById("current-user-display").innerText = pendingEmail;
 
-            renderCards(type);
+            renderCards();
         }
 
-        // Render danh sách 3 mục
-        function renderCards(userType) {
+        // Bước 3: Render danh sách các mục
+        function renderCards() {
             const container = document.getElementById("card-container");
             if (!container) return;
 
@@ -227,14 +190,13 @@
                 card.className = "card";
 
                 let actionHtml = "";
-                // Tài khoản Khách sẽ KHÔNG BAO GIỜ được ghi nhớ trạng thái key
-                const userKeyStatus = (userType === "Khách") ? "false" : localStorage.getItem(`luau_key_verified_${currentUser}`);
+                const userKeyStatus = localStorage.getItem(`luau_key_verified_${currentUser}`);
 
                 if (section.btnAction === "key_wall") {
                     if (userKeyStatus === "true") {
                         actionHtml = `
                             <div style="margin-top: 15px; border-top: 1px dashed #1f293d; padding-top: 15px;">
-                                <div style="color: #00ffcc; font-size: 13px; margin-bottom: 8px;">✅ Tài khoản Email đã được ghi nhớ Key 7 ngày!</div>
+                                <div style="color: #00ffcc; font-size: 13px; margin-bottom: 8px;">✅ Tài khoản đã được ghi nhớ Key 7 ngày!</div>
                                 <button onclick="window.location.href='${section.redirectUrl}'" style="width: 100%; padding: 10px; background: #00ffcc; color: #0b0f19; border: none; font-weight: bold; border-radius: 6px; cursor: pointer;">
                                     TRUY CẬP NGAY
                                 </button>
@@ -246,7 +208,7 @@
                                 <p style="font-size: 13px; color: #ff9f43; margin-bottom: 8px;">🔒 Nhập Key 7 ngày để mở khóa:</p>
                                 <div style="display: flex; gap: 8px; margin-bottom: 8px;">
                                     <input type="text" id="key-input-${index}" placeholder="Dán key luaurb_..." style="flex: 1; padding: 10px; background: #060911; border: 1px solid #1f293d; color: #fff; border-radius: 6px; font-family: monospace;">
-                                    <button onclick="verifyKey(${index}, '${section.redirectUrl}', '${userType}')" style="padding: 10px 15px; background: #00ffcc; color: #0b0f19; border: none; font-weight: bold; border-radius: 6px; cursor: pointer;">XÁC THỰC</button>
+                                    <button onclick="verifyKey(${index}, '${section.redirectUrl}')" style="padding: 10px 15px; background: #00ffcc; color: #0b0f19; border: none; font-weight: bold; border-radius: 6px; cursor: pointer;">XÁC THỰC</button>
                                 </div>
                                 <a href="${section.buttonLink}" target="_blank" style="display: inline-block; color: #00ffcc; font-size: 13px; text-decoration: underline;">👉 Bấm vào đây để lấy Key Lootlabs (2 phút)</a>
                             </div>
@@ -273,7 +235,7 @@
         }
 
         // Xác thực Key cho Mục 3
-        function verifyKey(index, redirectUrl, userType) {
+        function verifyKey(index, redirectUrl) {
             const inputField = document.getElementById(`key-input-${index}`);
             const userEnteredKey = inputField.value.trim();
             const currentUser = localStorage.getItem("luau_logged_user");
@@ -294,13 +256,8 @@
             }
 
             if (userEnteredKey === keyObj.key) {
-                // Nếu là tài khoản Email mới lưu trạng thái, tài khoản Khách thì KHÔNG LƯU
-                if (userType !== "Khách") {
-                    localStorage.setItem(`luau_key_verified_${currentUser}`, "true");
-                    alert("Xác thực thành công! Tài khoản Email đã được ghi nhớ Key 7 ngày.");
-                } else {
-                    alert("Xác thực thành công! (Tài khoản khách sẽ cần nhập lại key trong lần truy cập sau).");
-                }
+                localStorage.setItem(`luau_key_verified_${currentUser}`, "true");
+                alert("Xác thực thành công! Tài khoản Email đã được ghi nhớ Key 7 ngày.");
                 window.location.href = redirectUrl;
             } else {
                 alert("Key không chính xác! Hãy kiểm tra lại.");
