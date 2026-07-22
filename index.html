@@ -34,7 +34,7 @@
 
                 <div class="cf-turnstile" data-sitekey="1x00000000000000000000AA" data-theme="dark"></div>
 
-                <button id="register-login-btn" onclick="handleUserAccess()" style="width: 100%; margin-top: 15px; padding: 12px; background: #00ffcc; color: #0b0f19; border: none; font-weight: bold; border-radius: 6px; cursor: pointer;">ĐĂNG KÝ / ĐĂNG NHẬP</button>
+                <button onclick="handleUserAccess()" style="width: 100%; margin-top: 15px; padding: 12px; background: #00ffcc; color: #0b0f19; border: none; font-weight: bold; border-radius: 6px; cursor: pointer;">ĐĂNG KÝ / ĐĂNG NHẬP</button>
                 <div id="error-msg" class="error-text" style="color: #ff4757; margin-top: 10px; font-size: 13px;"></div>
             </div>
         </div>
@@ -82,7 +82,7 @@
             ]
         };
 
-        // Kiểm tra xem trình duyệt đã lưu tài khoản từ trước chưa
+        // Kiểm tra xem trình duyệt đã lưu tài khoản từ trước chưa để điền sẵn
         document.addEventListener("DOMContentLoaded", () => {
             const savedUser = localStorage.getItem("luau_logged_user");
             if (savedUser) {
@@ -131,12 +131,10 @@
 
                 let actionHtml = "";
                 const currentUser = localStorage.getItem("luau_logged_user");
-                // Kiểm tra xem tài khoản này đã từng lưu trạng thái vượt Key cho mục 3 chưa
                 const userKeyStatus = localStorage.getItem(`luau_key_verified_${currentUser}`);
 
                 if (section.btnAction === "key_wall") {
                     if (userKeyStatus === "true") {
-                        // Nếu tài khoản này đã từng nhập key thành công rồi thì hiện nút vào luôn không cần nhập lại
                         actionHtml = `
                             <div style="margin-top: 15px; border-top: 1px dashed #1f293d; padding-top: 15px;">
                                 <div style="color: #00ffcc; font-size: 13px; margin-bottom: 8px;">✅ Tài khoản đã được ghi nhớ Key 7 ngày!</div>
@@ -146,7 +144,6 @@
                             </div>
                         `;
                     } else {
-                        // Chưa nhập key thì hiện khung nhập
                         actionHtml = `
                             <div style="margin-top: 15px; border-top: 1px dashed #1f293d; padding-top: 15px;">
                                 <p style="font-size: 13px; color: #ff9f43; margin-bottom: 8px;">🔒 Nhập Key 7 ngày để mở khóa:</p>
@@ -200,7 +197,6 @@
             }
 
             if (userEnteredKey === keyObj.key) {
-                // Ghi nhớ trạng thái đã vượt key cho riêng tài khoản này
                 localStorage.setItem(`luau_key_verified_${currentUser}`, "true");
                 alert("Xác thực thành công! Tài khoản đã được ghi nhớ trạng thái mở khóa.");
                 window.location.href = redirectUrl;
